@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unified Health Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    .card {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(30, 41, 59, 0.75);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.125);
+    }
+    .animate-fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .recording-pulse {
+       box-shadow: 0 0 0 0 rgba(239, 68, 68, 1);
+       animation: pulse-red 2s infinite;
+    }
+    @keyframes pulse-red {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .live-activity {
+        background-color: rgba(56, 189, 248, 0.1);
+        border-left: 2px solid #38bdf8;
+        padding-left: 0.75rem; 
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+  <h1 class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 mb-8 animate-fade-in">
+    Unified Health Dashboard
+  </h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in" style="animation-delay: 0.2s;">
+
+    <div id="har-card" class="card w-full shadow-2xl p-8">
+      <div class="flex items-center space-x-3 mb-6">
+          <svg class="w-8 h-8 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.663V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.16a2.25 2.25 0 00-.1-.663L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859M12 3v8.25m0 0l-3-3m3 3l3-3" /></svg>
+          <h2 class="text-2xl font-bold text-white">Real-time Activity</h2>
+      </div>
+      <div class="text-center mb-8">
+        <div id="har_icon" class="text-8xl my-6 text-slate-500 h-32 flex items-center justify-center">
+          <svg class="h-32 w-32" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </div>
+        <p id="har_text" class="text-6xl font-extrabold text-white mt-4" style="height: 72px;">
+          Waiting...
+        </p>
+      </div>
+      <p class="text-center text-slate-400 text-sm mb-2">Confidence</p>
+      <div class="w-full bg-slate-700 rounded-full h-4 mb-4 border border-slate-900">
+        <div id="har_confidence_bar" class="bg-gradient-to-r from-indigo-500 to-cyan-500 h-full rounded-full text-right" style="width: 0%; transition: width 0.5s ease;">
+            <span id="har_confidence_text" class="pr-2 text-xs font-bold text-black opacity-0">0%</span>
+        </div>
+      </div>
+      
+      <div id="session-tracker" class="mt-8">
+        <h3 class="text-lg font-semibold text-indigo-400 border-t border-slate-700 pt-4">
+            Session Tracker
+        </h3>
+        <div id="tracker-list" class="mt-4 space-y-2">
+            </div>
+      </div>
+      <div id="har_status_indicator" class="flex justify-center items-center space-x-2 text-slate-500 transition-colors duration-500 mt-8">
+          <span id="har_status_dot" class="relative inline-flex rounded-full h-3 w-3 bg-slate-600"></span>
+          <span id="har_status_text">Connecting...</span>
+      </div>
+    </div>
+
+    <div id="audio-card" class="card w-full shadow-2xl p-8">
+      <div class="flex items-center space-x-3 mb-6">
+        <svg class="w-8 h-8 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75v 6.75m0 0l-3-3m3 3l3-3m-3.75 6H7.5a1.5 1.5 0 01-1.5-1.5V11.25a1.5 1.5 0 011.5-1.5h1.5v-1.5a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5v1.5h1.5a1.5 1.5 0 011.5 1.5v5.25a1.5 1.5 0 01-1.5-1.5h-3.75m-3.75 0H12m0 0v-6.75m0 6.75v3.75m0-3.75H12m3.75 0h3.75a1.5 1.5 0 001.5-1.5V11.25a1.5 1.5 0 00-1.5-1.5h-1.5v-1.5a1.5 1.5 0 00-1.5-1.5h-3a1.5 1.5 0 00-1.5 1.5v1.5H7.5a1.5 1.5 0 00-1.5 1.5v5.25a1.5 1.5 0 001.5 1.5h3.75" /></svg>
+        <h2 class="text-2xl font-bold text-white">Audio Event Monitor</h2>
+      </div>
+      <div class="text-center mb-8">
+        <p class="text-sm font-medium text-indigo-400 tracking-wider uppercase">Cough Count</p>
+        <p id="coughCount" class="text-8xl font-extrabold text-white">0</p>
+      </div>
+      <div id="audio_status" class="text-lg text-slate-400 text-center h-6 mb-4">Idle</div>
+      <div id="audio_result" class="mt-2 text-center text-xl font-medium h-10"></div>
+      <div class="flex flex-col items-center space-y-6 mt-8">
+        <div class="flex space-x-4">
+          <button id="startBtn" class="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-500/30">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" /></svg>
+            <span>Start Monitoring</span>
+          </button>
+          <button id="stopBtn" class="flex items-center justify-center space-x-2 bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hidden">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" /></svg>
+            <span>Stop Monitoring</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="prescriptionModal" class="fixed inset-0 z-50 items-center justify-center" style="display: none; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px);">
+    <div class="modal-content card w-full max-w-lg shadow-2xl p-8 m-4">
+      <h2 class="text-2xl font-bold mb-4 text-center text-yellow-400">Health Tip</h2>
+      <p class="text-center text-slate-300 mb-6">High cough frequency detected. Please consider these tips:</p>
+      <ul class="list-disc list-inside space-y-2 text-slate-200">
+        <li>Drink plenty of warm fluids, like water, herbal tea, or soup.</li>
+        <li>Rest your voice and your body.</li>
+        <li>Try gargling with warm salt water.</li>
+      </ul>
+      <p class="text-center text-sm text-slate-400 mt-6"><strong>Disclaimer:</strong> This is not medical advice. Consult a healthcare professional.</p>
+      <div class="text-center mt-6">
+        <button id="closeModalBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300">Got it</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // ======================================================
+    // === HAR (ACTIVITY) SCRIPT ============================
+    // ======================================================
+    const harText = document.getElementById("har_text");
+    const harIcon = document.getElementById("har_icon");
+    const harConfBar = document.getElementById("har_confidence_bar");
+    const harConfText = document.getElementById("har_confidence_text");
+    const harStatusDot = document.getElementById("har_status_dot");
+    const harStatusText = document.getElementById("har_status_text");
+    const harStatusIndicator = document.getElementById("har_status_indicator");
+    const trackerList = document.getElementById("tracker-list"); 
+
+    // --- UPDATED: The labels our dashboard will show ---
+    const HAR_LABELS = ["Downstairs", "Jogging", "Still", "Upstairs", "Walking"];
+    
+    // --- UPDATED: Time Tracking Variables ---
+    let activityTimes = {
+        "Downstairs": 0, "Jogging": 0, "Still": 0,
+        "Upstairs": 0, "Walking": 0, "Waiting...": 0
+    };
+    let currentActivity = "Waiting...";
+    let lastActivityStartTime = Date.now();
+    let harConnected = false;
+    
+    // --- UPDATED: Icon object ---
+    const HAR_ICONS = {
+        "Walking":    '<svg class="h-32 w-32 mx-auto text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" /></svg>',
+        "Jogging":    '<svg class="h-32 w-32 mx-auto text-lime-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.75v16.5M6.75 3.75v16.5M3 3.75h18M3 20.25h18" /></svg>',
+        "Still":      '<svg class="h-32 w-32 mx-auto text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+        "Upstairs":   '<svg class="h-32 w-32 mx-auto text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>',
+        "Downstairs": '<svg class="h-32 w-32 mx-auto text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>',
+        "Waiting...": '<svg class="h-32 w-32 mx-auto text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+    };
+
+    // --- Connect to the WebSocket ---
+    // Remove the 'f' from the line below
+    const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('connect', function() {
+        console.log('✅ [HAR] Connected to WebSocket!');
+        harStatusIndicator.classList.remove('text-slate-500');
+        harStatusIndicator.classList.add('text-green-400');
+        harStatusDot.classList.add('bg-green-500');
+        harStatusText.innerText = "Connected";
+        harConnected = true;
+        lastActivityStartTime = Date.now();
+    });
+
+    socket.on('disconnect', function() {
+        console.log('❌ [HAR] Disconnected from WebSocket.');
+        harStatusIndicator.classList.remove('text-green-400');
+        harStatusIndicator.classList.add('text-red-400');
+        harStatusDot.classList.remove('bg-green-500');
+        harStatusDot.classList.add('bg-red-500');
+        harStatusText.innerText = "Disconnected";
+        harConnected = false;
+        updateHarUI("Waiting...", 0);
+    });
+
+    socket.on('har_prediction', function(data) {
+        if (!harConnected) return; 
+        
+        if (data.activity !== currentActivity) {
+            const duration = Date.now() - lastActivityStartTime;
+            // Check if the old activity is one we track (not "Waiting...")
+            if (HAR_LABELS.includes(currentActivity)) {
+                activityTimes[currentActivity] += duration;
+            }
+            currentActivity = data.activity;
+            lastActivityStartTime = Date.now();
+        }
+        
+        updateHarUI(data.activity, data.confidence);
+    });
+
+    function formatTime(ms) {
+        if (ms < 0) ms = 0;
+        return new Date(ms).toISOString().slice(11, 19);
+    }
+
+    function initializeTrackerList() {
+        trackerList.innerHTML = "";
+        // Use the new HAR_LABELS list
+        HAR_LABELS.forEach(activity => {
+            const row = document.createElement('div');
+            row.className = "flex justify-between items-center text-slate-300 transition-all duration-300";
+            row.id = `tracker-${activity}`;
+            row.innerHTML = `
+                <span class="text-lg">${activity}</span>
+                <span class="font-mono text-xl">00:00:00</span>
+            `;
+            trackerList.appendChild(row);
+        });
+    }
+
+    setInterval(updateTrackerTimers, 1000);
+
+    function updateTrackerTimers() {
+        if (!harConnected) return; 
+
+        // Use the new HAR_LABELS list
+        HAR_LABELS.forEach(activity => {
+            const row = document.getElementById(`tracker-${activity}`);
+            if (!row) return; 
+            
+            const timeSpan = row.querySelector("span:last-child");
+            let totalTime = activityTimes[activity];
+
+            if (activity === currentActivity) {
+                const liveDuration = Date.now() - lastActivityStartTime;
+                totalTime += liveDuration;
+                row.classList.add("live-activity", "font-semibold", "text-cyan-400");
+                row.style.transform = "scale(1.02)";
+            } else {
+                row.classList.remove("live-activity", "font-semibold", "text-cyan-400");
+                row.style.transform = "scale(1)";
+            }
+            
+            timeSpan.textContent = formatTime(totalTime);
+        });
+    }
+    
+    function updateHarUI(activity, confidence) {
+        const confidencePct = (confidence * 100).toFixed(0);
+        
+        harText.innerText = activity;
+        harIcon.innerHTML = HAR_ICONS[activity] || HAR_ICONS["Waiting..."];
+        harConfBar.style.width = confidencePct + '%';
+        harConfText.innerText = confidencePct + '%';
+        
+        if (confidence > 0.15) {
+            harConfText.classList.remove('opacity-0');
+        } else {
+            harConfText.classList.add('opacity-0');
+        }
+    }
+    
+    initializeTrackerList();
+    
+
+    // ======================================================
+    // === AUDIO (COUGH) SCRIPT =============================
+    // ======================================================
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const audioStatusDiv = document.getElementById("audio_status");
+    const audioResultDiv = document.getElementById("audio_result");
+    const coughCountEl = document.getElementById("coughCount");
+    const modal = document.getElementById("prescriptionModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    const AUDIO_API_URL = "/predict_audio"; 
+    const COUGH_CONFIDENCE_THRESHOLD = 0.50;
+    const RECORDING_LENGTH_MS = 5200;
+
+    let mediaRecorder;
+    let audioChunks = [];
+    let isMonitoring = false;
+    let coughCount = 0;
+
+    startBtn.addEventListener("click", startMonitoring);
+    stopBtn.addEventListener("click", stopMonitoring);
+    closeModalBtn.addEventListener("click", () => modal.style.display = "none");
+
+    async function startMonitoring() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        isMonitoring = true;
+        startBtn.classList.add("hidden");
+        stopBtn.classList.remove("hidden");
+        audioStatusDiv.textContent = "Starting...";
+        audioResultDiv.innerHTML = "";
+        coughCount = 0;
+        coughCountEl.textContent = "0";
+        recordAndAnalyze(stream);
+      } catch (err) {
+        console.error("❌ Error accessing microphone:", err);
+        audioStatusDiv.textContent = "Mic access denied.";
+      }
+    }
+
+    function stopMonitoring() {
+      isMonitoring = false;
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+      }
+      startBtn.classList.remove("hidden");
+      stopBtn.classList.add("hidden");
+      audioStatusDiv.textContent = "Idle";
+      audioResultDiv.innerHTML = "";
+    }
+
+    function recordAndAnalyze(stream) {
+      if (!isMonitoring) return;
+      audioStatusDiv.innerHTML = `<span class="text-red-500 recording-pulse">🔴 Recording...</span>`;
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        audioStatusDiv.innerHTML = `<span class="text-cyan-400">🧠 Analyzing...</span>`;
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioFile = new File([audioBlob], "recording.wav", { type: 'audio/wav' });
+        
+        const result = await analyzeAudio(audioFile);
+        
+        if (result) {
+          if (result.prediction === 'coughing' && result.confidence >= COUGH_CONFIDENCE_THRESHOLD) {
+            audioResultDiv.innerHTML = `<p class="text-red-400 font-semibold">Cough Detected (${(result.confidence * 100).toFixed(0)}%)</p>`;
+            coughCount++;
+            coughCountEl.textContent = coughCount;
+            if (coughCount > 5) {
+              modal.style.display = "flex";
+            }
+          } else if (result.prediction === 'sneezing') {
+            audioResultDiv.innerHTML = `<p class="text-yellow-400 font-semibold">Sneeze Detected (${(result.confidence * 100).toFixed(0)}%)</p>`;
+          } else {
+            audioResultDiv.innerHTML = `<p class="text-green-400">${result.prediction} (${(result.confidence * 100).toFixed(0)}%)</p>`;
+          }
+        } else {
+          audioResultDiv.innerHTML = "";
+        }
+        setTimeout(() => recordAndAnalyze(stream), 100);
+      };
+      
+      mediaRecorder.start();
+      setTimeout(() => {
+        if (mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+        }
+      }, RECORDING_LENGTH_MS);
+    }
+
+    async function analyzeAudio(audioFile) {
+      const formData = new FormData();
+      formData.append("file", audioFile);
+
+      try {
+        const response = await fetch(AUDIO_API_URL, { method: "POST", body: formData });
+        const data = await response.json();
+        if (response.ok) {
+          return data;
+        } else {
+          audioResultDiv.innerHTML = `<p class="text-red-400">❌ Error: ${data.error}</p>`;
+          return null;
+        }
+      } catch (err) {
+        audioResultDiv.innerHTML = `<p class="text-red-400">❌ Could not reach backend.</p>`;
+        stopMonitoring();
+        return null;
+      }
+    }
+  </script>
+</body>
+</html>
