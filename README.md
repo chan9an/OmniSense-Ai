@@ -1,3 +1,4 @@
+````markdown
 # 🩺 OmniSense AI — Multi-Modal Activity & Health Monitoring
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
@@ -8,9 +9,9 @@
 
 ## 📘 Overview
 
-OmniSense AI is an end-to-end multi-modal intelligence system that performs real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
+OmniSense AI is an end-to-end multi-modal intelligence system designed for real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
 
-The platform fuses motion-sensor time-series data with audio-based spectral features to identify physical activities and detect events such as coughing or sneezing. It includes everything from data preprocessing and model training to a real-time backend and a polished React dashboard.
+The platform integrates motion-sensor time-series data with audio spectral analysis to classify activities and detect health events such as coughing or sneezing. It includes a full pipeline: preprocessing, model training, a low-latency Flask backend, and a responsive React dashboard.
 
 ---
 
@@ -18,10 +19,10 @@ The platform fuses motion-sensor time-series data with audio-based spectral feat
 
 | Component | Technologies |
 | :--- | :--- |
-| **Deep Learning** | :contentReference[oaicite:0]{index=0} (CNN), :contentReference[oaicite:1]{index=1} |
-| **Machine Learning** | :contentReference[oaicite:2]{index=2} (Random Forest), NumPy, Pandas |
-| **Backend API** | Python with :contentReference[oaicite:3]{index=3} |
-| **Frontend** | JavaScript with :contentReference[oaicite:4]{index=4} |
+| **Deep Learning** | Keras (CNN), TensorFlow |
+| **Machine Learning** | scikit-learn (Random Forest), NumPy, Pandas |
+| **Backend API** | Python (Flask), REST architecture |
+| **Frontend** | React, JavaScript, CSS Modules |
 | **Signal & Audio Processing** | Librosa, SciPy |
 
 ---
@@ -29,21 +30,21 @@ The platform fuses motion-sensor time-series data with audio-based spectral feat
 ## ✨ Key Features
 
 ### 🔹 Multi-Modal Deep Learning  
-Processes two coordinated data streams:
-- **Motion Sensors:** 1D-CNN models classify activities such as walking, running, or standing.  
-- **Audio:** Spectrogram-based models detect respiratory cues like coughs or sneezes.
+Supports two synchronized data streams:
+- **Motion:** 1D-CNN for classifying activities (walking, running, standing)  
+- **Audio:** Spectrogram analysis to detect respiratory events  
 
-### 🔹 Benchmarking  
-Includes a comparison between the custom CNN architecture and a classical Random Forest baseline.
+### 🔹 Model Benchmarking  
+Includes performance comparisons between CNN models and Random Forest baselines.
 
-### 🔹 Real-Time Performance  
-A lightweight Flask API supports **sub-200ms inference**, enabling instant response on the client dashboard.
+### 🔹 Real-Time Backend  
+Optimized Flask API with **<200ms** latency for real-time inference.
 
-### 🔹 Interactive Web Dashboard  
-A responsive React UI visualizes:
+### 🔹 Interactive Dashboard  
+React interface featuring:
 - Live activity predictions  
-- Real-time audio-based health events  
-- System status and inference metrics  
+- Respiratory event detection  
+- Real-time visualizations and metrics  
 
 ---
 
@@ -71,16 +72,16 @@ cd server
 
 # Create & activate virtual environment
 python -m venv venv
-source venv/bin/activate     # Windows: venv\Scripts\activate
+source venv/bin/activate      # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Start backend API
+# Start backend server
 python app.py
 ```
 
-Backend runs at: **http://localhost:5000**
+**Backend running at:** http://localhost:5000
 
 ---
 
@@ -92,7 +93,7 @@ npm install
 npm start
 ```
 
-Dashboard runs at: **http://localhost:3000**
+**Frontend running at:** http://localhost:3000
 
 ---
 
@@ -104,10 +105,10 @@ OmniSense-AI/
 │   ├── src/components/     # UI components & visualizations
 │   └── public/
 ├── server/                 # Flask backend
-│   ├── models/             # Trained .h5 / .pkl models
-│   ├── processing/         # Signal + audio processing scripts
-│   └── app.py              # API entry point
-├── notebooks/              # Training, EDA, experiments
+│   ├── models/             # Saved .h5 / .pkl models
+│   ├── processing/         # Audio / motion feature extraction
+│   └── app.py              # Main API server
+├── notebooks/              # Training notebooks & EDA
 └── requirements.txt
 ```
 
@@ -115,33 +116,40 @@ OmniSense-AI/
 
 ## 🔮 Future Enhancements
 
-- **On-Device Edge Deployment:** Convert models to TensorFlow Lite for mobile/embedded inference.  
-- **Transformer Models:** Explore Vision Transformers for improved spectrogram classification.  
-- **User Profiles & History:** Integrate a SQL database for long-term activity and event trends.
+- TensorFlow Lite model conversion for edge/mobile inference  
+- Vision Transformers (ViT) for spectrogram classification  
+- SQL database for long-term user activity profiles  
 
 ---
 
 ## 🤝 Contributing
 
 Contributions are welcome!  
-Feel free to open an issue or submit a pull request for new features, bug fixes, or enhancements.
+Feel free to open an issue or submit a pull request.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.
+This project is licensed under the **MIT License**.  
+See the `LICENSE` file for details.
 
 ---
 
 ### ✔ Recommended Additions
-- Generate `requirements.txt`:
-  ```bash
-  pip freeze > requirements.txt
-  ```
-- Add a `.gitignore` including:
-  ```
-  node_modules/
-  venv/
-  __pycache__/
-  ```
+
+**Generate requirements.txt**
+
+```bash
+pip freeze > requirements.txt
+```
+
+**Create .gitignore**
+
+```
+node_modules/
+venv/
+__pycache__/
+```
+````
+
