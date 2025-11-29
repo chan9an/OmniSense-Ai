@@ -1,4 +1,3 @@
-````markdown
 # 🩺 OmniSense AI — Multi-Modal Activity & Health Monitoring
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
