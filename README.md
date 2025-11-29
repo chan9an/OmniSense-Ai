@@ -1,5 +1,4 @@
-````markdown
-# 🩺 OmniSense AI: Multi-Modal Activity & Health Detection
+# 🩺 OmniSense AI — Multi-Modal Activity & Health Monitoring
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-orange)
@@ -7,11 +6,11 @@
 ![React](https://img.shields.io/badge/Frontend-React-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-## 📖 Overview
+## 📘 Overview
 
-**OmniSense AI** is a robust, multi-modal AI platform designed for real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
+OmniSense AI is an end-to-end multi-modal intelligence system that performs real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
 
-By fusing time-series sensor data (accelerometer/gyroscope) with audio input, the system can accurately classify physical activities and detect health events like coughing or sneezing. This project demonstrates a complete end-to-end pipeline—from raw data ingestion to a user-friendly React dashboard.
+The platform fuses motion-sensor time-series data with audio-based spectral features to identify physical activities and detect events such as coughing or sneezing. It includes everything from data preprocessing and model training to a real-time backend and a polished React dashboard.
 
 ---
 
@@ -19,106 +18,130 @@ By fusing time-series sensor data (accelerometer/gyroscope) with audio input, th
 
 | Component | Technologies |
 | :--- | :--- |
-| **Deep Learning** | **Keras (CNN)**, TensorFlow |
-| **Machine Learning** | **scikit-learn** (Random Forest Baseline), NumPy, Pandas |
-| **Backend API** | **Python (Flask)**, RESTful Architecture |
-| **Frontend** | **React**, JavaScript, CSS Modules |
-| **Data Processing** | Librosa (Audio), SciPy (Signal Processing) |
+| **Deep Learning** | :contentReference[oaicite:0]{index=0} (CNN), :contentReference[oaicite:1]{index=1} |
+| **Machine Learning** | :contentReference[oaicite:2]{index=2} (Random Forest), NumPy, Pandas |
+| **Backend API** | Python with :contentReference[oaicite:3]{index=3} |
+| **Frontend** | JavaScript with :contentReference[oaicite:4]{index=4} |
+| **Signal & Audio Processing** | Librosa, SciPy |
 
 ---
 
 ## ✨ Key Features
 
-* **Multi-Modal Architecture:** Simultaneously processes two distinct data streams:
-    * **Motion:** 1D-CNN models analyze time-series data to detect activities (Walking, Standing, Running).
-    * **Audio:** Spectral analysis detects specific respiratory sounds (Coughs, Sneezes).
-* **Deep Learning vs. Classical ML:** Includes a comparative study benchmarking the custom **Convolutional Neural Network (CNN)** against Random Forest classifiers to validate performance gains.
-* **Real-Time Inference:** Engineered a low-latency **Flask** backend that serves predictions to the client in under 200ms.
-* **Interactive Dashboard:** A responsive **React** frontend that visualizes live activity status and health alerts.
+### 🔹 Multi-Modal Deep Learning  
+Processes two coordinated data streams:
+- **Motion Sensors:** 1D-CNN models classify activities such as walking, running, or standing.  
+- **Audio:** Spectrogram-based models detect respiratory cues like coughs or sneezes.
+
+### 🔹 Benchmarking  
+Includes a comparison between the custom CNN architecture and a classical Random Forest baseline.
+
+### 🔹 Real-Time Performance  
+A lightweight Flask API supports **sub-200ms inference**, enabling instant response on the client dashboard.
+
+### 🔹 Interactive Web Dashboard  
+A responsive React UI visualizes:
+- Live activity predictions  
+- Real-time audio-based health events  
+- System status and inference metrics  
 
 ---
 
 ## 🚀 Installation & Setup
 
 ### Prerequisites
-* Python 3.8+
-* Node.js & npm
+- Python 3.8+
+- Node.js & npm
 
-### 1. Clone the Repository
+---
+
+## 1. Clone the Repository
+
 ```bash
-git clone [https://github.com/yourusername/OmniSense-AI.git](https://github.com/yourusername/OmniSense-AI.git)
+git clone https://github.com/chan9an/OmniSense-AI.git
 cd OmniSense-AI
-````
+```
 
-### 2\. Backend Setup (Flask)
+---
+
+## 2. Backend Setup (Flask)
 
 ```bash
 cd server
-# Create virtual environment
+
+# Create & activate virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate     # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the API server
+# Start backend API
 python app.py
 ```
 
-*Server running at `http://localhost:5000`*
+Backend runs at: **http://localhost:5000**
 
-### 3\. Frontend Setup (React)
+---
+
+## 3. Frontend Setup (React)
 
 ```bash
 cd client
-# Install dependencies
 npm install
-
-# Start the dashboard
 npm start
 ```
 
-*Client running at `http://localhost:3000`*
+Dashboard runs at: **http://localhost:3000**
 
------
+---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
 OmniSense-AI/
-├── client/                 # React Frontend logic
-│   ├── src/components/     # Visualization components
+├── client/                 # React frontend
+│   ├── src/components/     # UI components & visualizations
 │   └── public/
-├── server/                 # Python Backend
-│   ├── models/             # Saved .h5 and .pkl models
-│   ├── processing/         # Feature extraction scripts
-│   └── app.py              # Flask API entry point
-├── notebooks/              # Jupyter notebooks for training & EDA
+├── server/                 # Flask backend
+│   ├── models/             # Trained .h5 / .pkl models
+│   ├── processing/         # Signal + audio processing scripts
+│   └── app.py              # API entry point
+├── notebooks/              # Training, EDA, experiments
 └── requirements.txt
 ```
 
-## 🔮 Future Improvements
+---
 
-  * **Edge Deployment:** Quantize models using TensorFlow Lite for on-device inference (Android/iOS).
-  * **Transformer Integration:** Experiment with Vision Transformers (ViT) for spectrogram classification to improve audio accuracy.
-  * **User Profiles:** Add database integration (SQL) to track historical user activity trends over time.
+## 🔮 Future Enhancements
 
------
+- **On-Device Edge Deployment:** Convert models to TensorFlow Lite for mobile/embedded inference.  
+- **Transformer Models:** Explore Vision Transformers for improved spectrogram classification.  
+- **User Profiles & History:** Integrate a SQL database for long-term activity and event trends.
+
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome\! Please open an issue or submit a pull request for any improvements.
+Contributions are welcome!  
+Feel free to open an issue or submit a pull request for new features, bug fixes, or enhancements.
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+This project is licensed under the **MIT License**. See the `LICENSE` file for details.
 
-````
+---
 
-### **Don't forget to:**
-1.  **Create a `requirements.txt`** file in your server folder if you haven't already:
-    ```bash
-    pip freeze > requirements.txt
-    ```
-2.  **Add a `.gitignore`** to exclude `node_modules`, `venv`, and `__pycache__`.
-````
+### ✔ Recommended Additions
+- Generate `requirements.txt`:
+  ```bash
+  pip freeze > requirements.txt
+  ```
+- Add a `.gitignore` including:
+  ```
+  node_modules/
+  venv/
+  __pycache__/
+  ```
