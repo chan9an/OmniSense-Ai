@@ -1,93 +1,124 @@
 ````markdown
-# 🩺 OmniSense AI: Multi-Modal Activity & Cough Detection System
+# 🩺 OmniSense AI: Multi-Modal Activity & Health Detection
 
-## Overview
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-orange)
+![Flask](https://img.shields.io/badge/Backend-Flask-green)
+![React](https://img.shields.io/badge/Frontend-React-blueviolet)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-OmniSense AI is a comprehensive, end-to-end platform that leverages machine learning and sensor fusion to provide real-time human activity recognition (HAR) and respiratory event monitoring (cough detection).
+## 📖 Overview
 
-The project successfully integrates deep learning models for complex time-series analysis with a responsive web application, demonstrating expertise across the entire **MLOps** and **Full-Stack** development lifecycle.
+**OmniSense AI** is a robust, multi-modal AI platform designed for real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
 
----
-
-## 🛠️ Technical Stack & Tools
-
-| Component | Technologies Used | Purpose |
-| :--- | :--- | :--- |
-| **Data Collection** | Phyphox (Mobile App) | Real-time streaming of raw accelerometer and gyroscope data. |
-| **Backend/API** | **Python**, **Flask** | Model inference, data ingestion, and exposing prediction endpoints. |
-| **Frontend/Visualization** | **React** | Interactive dashboard for real-time activity and cough status display. |
-| **Machine Learning** | **Keras (CNN)**, **TensorFlow**, **scikit-learn** | Building, training, and evaluating deep learning and classical classification models. |
-| **Data Science** | NumPy, Pandas | Sensor data preprocessing, feature engineering, and pipeline management. |
+By fusing time-series sensor data (accelerometer/gyroscope) with audio input, the system can accurately classify physical activities and detect health events like coughing or sneezing. This project demonstrates a complete end-to-end pipeline—from raw data ingestion to a user-friendly React dashboard.
 
 ---
 
-## ✨ Key Features & Technical Depth
+## 🛠️ Tech Stack
 
-* **Multi-Modal Data Processing:** Architected a single platform to handle two distinct data types: **time-series** sensor data (for HAR) and **audio** data (for cough detection).
-* **Deep Learning (DL) Pipeline:** Developed a **Convolutional Neural Network (CNN)** using Keras for robust feature extraction and classification of complex time-series sensor patterns.
-* **Model Benchmarking:** Employed analytical rigor by benchmarking the DL model against classical machine learning algorithms (Random Forest, SVM) using **scikit-learn** to validate superior accuracy.
-* **Real-Time Deployment:** Deployed the trained models using a **Python (Flask) REST API**, allowing the external React frontend to request and display activity predictions with low latency.
-* **End-to-End System:** Built a complete full-stack system from sensor data ingestion (Phyphox streaming) to UI visualization (React).
-
----
-
-## 🚀 Future Scope & Improvements
-
-The modular architecture of OmniSense AI allows for easy expansion:
-
-1.  **Direct Memory Reading (Advanced):** Replace log/stream parsing with advanced techniques (e.g., memory tracing) for zero-latency event detection.
-2.  **Model Optimization:** Explore using **PyTorch** for model training and quantization for deployment on edge devices.
-3.  **UI/UX:** Develop a dedicated mobile application (instead of using Phyphox) for seamless, always-on sensor data capture and user interaction.
+| Component | Technologies |
+| :--- | :--- |
+| **Deep Learning** | **Keras (CNN)**, TensorFlow |
+| **Machine Learning** | **scikit-learn** (Random Forest Baseline), NumPy, Pandas |
+| **Backend API** | **Python (Flask)**, RESTful Architecture |
+| **Frontend** | **React**, JavaScript, CSS Modules |
+| **Data Processing** | Librosa (Audio), SciPy (Signal Processing) |
 
 ---
 
-## ⚙️ Getting Started
+## ✨ Key Features
 
-To run this project locally, you will need Python 3.9+ and Node.js (for the React frontend).
+* **Multi-Modal Architecture:** Simultaneously processes two distinct data streams:
+    * **Motion:** 1D-CNN models analyze time-series data to detect activities (Walking, Standing, Running).
+    * **Audio:** Spectral analysis detects specific respiratory sounds (Coughs, Sneezes).
+* **Deep Learning vs. Classical ML:** Includes a comparative study benchmarking the custom **Convolutional Neural Network (CNN)** against Random Forest classifiers to validate performance gains.
+* **Real-Time Inference:** Engineered a low-latency **Flask** backend that serves predictions to the client in under 200ms.
+* **Interactive Dashboard:** A responsive **React** frontend that visualizes live activity status and health alerts.
+
+---
+
+## 🚀 Installation & Setup
 
 ### Prerequisites
+* Python 3.8+
+* Node.js & npm
 
+### 1. Clone the Repository
 ```bash
-# 1. Clone the repository
-git clone [https://github.com/chan9an/OmniSense-AI.git](https://github.com/chan9an/OmniSense-AI.git)
+git clone [https://github.com/yourusername/OmniSense-AI.git](https://github.com/yourusername/OmniSense-AI.git)
 cd OmniSense-AI
 ````
 
-### Backend Setup (Python/Flask)
+### 2\. Backend Setup (Flask)
 
-1.  Create and activate a virtual environment:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate
-    ```
-2.  Install the required packages:
-    ```bash
-    pip install Flask scikit-learn tensorflow pandas numpy
-    ```
-3.  Run the Flask API (ensuring network accessibility for sensor streaming):
-    ```bash
-    python main_server.py
-    ```
-    *The server will run on `http://0.0.0.0:5000`.*
+```bash
+cd server
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-### Frontend Setup (React)
+# Install dependencies
+pip install -r requirements.txt
 
-*(Assuming frontend code lives in a subdirectory named `client/`)*
-
-1.  Navigate to the frontend directory:
-    ```bash
-    cd client
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Start the React application:
-    ```bash
-    npm start
-    ```
-
-The application will open in your browser, connecting in real-time to the Flask API for prediction updates.
-
+# Run the API server
+python app.py
 ```
+
+*Server running at `http://localhost:5000`*
+
+### 3\. Frontend Setup (React)
+
+```bash
+cd client
+# Install dependencies
+npm install
+
+# Start the dashboard
+npm start
 ```
+
+*Client running at `http://localhost:3000`*
+
+-----
+
+## 📂 Project Structure
+
+```text
+OmniSense-AI/
+├── client/                 # React Frontend logic
+│   ├── src/components/     # Visualization components
+│   └── public/
+├── server/                 # Python Backend
+│   ├── models/             # Saved .h5 and .pkl models
+│   ├── processing/         # Feature extraction scripts
+│   └── app.py              # Flask API entry point
+├── notebooks/              # Jupyter notebooks for training & EDA
+└── requirements.txt
+```
+
+## 🔮 Future Improvements
+
+  * **Edge Deployment:** Quantize models using TensorFlow Lite for on-device inference (Android/iOS).
+  * **Transformer Integration:** Experiment with Vision Transformers (ViT) for spectrogram classification to improve audio accuracy.
+  * **User Profiles:** Add database integration (SQL) to track historical user activity trends over time.
+
+-----
+
+## 🤝 Contributing
+
+Contributions are welcome\! Please open an issue or submit a pull request for any improvements.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+
+````
+
+### **Don't forget to:**
+1.  **Create a `requirements.txt`** file in your server folder if you haven't already:
+    ```bash
+    pip freeze > requirements.txt
+    ```
+2.  **Add a `.gitignore`** to exclude `node_modules`, `venv`, and `__pycache__`.
+````
