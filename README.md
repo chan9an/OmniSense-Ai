@@ -28,18 +28,18 @@ The platform integrates motion-sensor time-series data with audio spectral analy
 
 ## Key Features
 
-### 🔹 Multi-Modal Deep Learning  
+###  Multi-Modal Deep Learning  
 Supports two synchronized data streams:
 - **Motion:** 1D-CNN for classifying activities (walking, running, standing)  
 - **Audio:** Spectrogram analysis to detect respiratory events  
 
-### 🔹 Model Benchmarking  
+###  Model Benchmarking  
 Includes performance comparisons between CNN models and Random Forest baselines.
 
-### 🔹 Real-Time Backend  
+### Real-Time Backend  
 Optimized Flask API with **<200ms** latency for real-time inference.
 
-### 🔹 Interactive Dashboard  
+### Interactive Dashboard  
 React interface featuring:
 - Live activity predictions  
 - Respiratory event detection  
@@ -113,7 +113,7 @@ OmniSense-AI/
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 - TensorFlow Lite model conversion for edge/mobile inference  
 - Vision Transformers (ViT) for spectrogram classification  
@@ -135,7 +135,7 @@ See the `LICENSE` file for details.
 
 ---
 
-### ✔ Recommended Additions
+###  Recommended Additions
 
 **Generate requirements.txt**
 
