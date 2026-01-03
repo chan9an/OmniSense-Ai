@@ -1,4 +1,4 @@
-# 🩺 OmniSense AI — Multi-Modal Activity & Health Monitoring
+# OmniSense AI — Multi-Modal Activity & Health Monitoring
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-orange)
@@ -6,7 +6,7 @@
 ![React](https://img.shields.io/badge/Frontend-React-blueviolet)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-## 📘 Overview
+## Overview
 
 OmniSense AI is an end-to-end multi-modal intelligence system designed for real-time **Human Activity Recognition (HAR)** and **respiratory event detection**.
 
@@ -26,7 +26,7 @@ The platform integrates motion-sensor time-series data with audio spectral analy
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### 🔹 Multi-Modal Deep Learning  
 Supports two synchronized data streams:
@@ -47,7 +47,7 @@ React interface featuring:
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Python 3.8+
@@ -96,7 +96,7 @@ npm start
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 OmniSense-AI/
@@ -121,14 +121,14 @@ OmniSense-AI/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome!  
 Feel free to open an issue or submit a pull request.
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the **MIT License**.  
 See the `LICENSE` file for details.
